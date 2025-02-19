@@ -1,0 +1,8 @@
+Sí, eliminar los "inmortales" muertos de la lista compartida puede generar una condición de carrera, ya que múltiples hilos pueden intentar acceder y modificar la lista simultáneamente. Esto puede causar inconsistencias, como intentos de acceso a elementos inexistentes o errores de concurrencia (por ejemplo, ConcurrentModificationException).
+Para evitar estos problemas y no hacer el acceso a la lista secuencial, se implementó la siguiente estrategia:
+
+- Marcar inmortales como muertos en lugar de eliminarlos inmediatamente.
+
+- Usar un ScheduledExecutorService en ControlFrame para limpiar periódicamente los muertos.
+
+- Evitar seleccionar oponentes muertos antes de iniciar una pelea.
