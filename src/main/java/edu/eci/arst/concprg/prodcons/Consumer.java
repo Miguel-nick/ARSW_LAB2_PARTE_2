@@ -5,30 +5,33 @@
  */
 package edu.eci.arst.concprg.prodcons;
 
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  *
  * @author hcadavid
  */
-public class Consumer extends Thread{
-    
-    private Queue<Integer> queue;
-    
-    
-    public Consumer(Queue<Integer> queue){
-        this.queue=queue;        
+public class Consumer extends Thread {
+
+    private BlockingQueue<Integer> queue;
+
+    public Consumer(BlockingQueue<Integer> queue) {
+        this.queue = queue;
     }
-    
+
     @Override
     public void run() {
         while (true) {
+            try {
+                // take() bloquea automáticamente si la cola está vacía
+                int elem = queue.take();
+                System.out.println("Consumer consumes " + elem + " (Queue size: " + queue.size() + ")");
 
-            if (queue.size() > 0) {
-                int elem=queue.poll();
-                System.out.println("Consumer consumes "+elem);                                
+                // Consumo lento: 2 segundos
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
             }
-            
         }
     }
 }

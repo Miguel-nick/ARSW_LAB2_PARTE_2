@@ -87,19 +87,32 @@ public class ControlFrame extends JFrame {
         JButton btnPauseAndCheck = new JButton("Pause and check");
         btnPauseAndCheck.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                for (Immortal im : immortals) {
+                    im.pauseImmortal();
+                }
 
-                /*
-				 * COMPLETAR
-                 */
+                boolean allPaused = false;
+                while (!allPaused) {
+                    allPaused = true;
+                    for (Immortal im : immortals) {
+                        if (!im.isPaused()) {
+                            allPaused = false;
+                            break;
+                        }
+                    }
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+
                 int sum = 0;
                 for (Immortal im : immortals) {
                     sum += im.getHealth();
                 }
 
                 statisticsLabel.setText("<html>"+immortals.toString()+"<br>Health sum:"+ sum);
-                
-                
-
             }
         });
         toolBar.add(btnPauseAndCheck);
@@ -108,10 +121,9 @@ public class ControlFrame extends JFrame {
 
         btnResume.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                /**
-                 * IMPLEMENTAR
-                 */
-
+                for (Immortal im : immortals) {
+                    im.resumeImmortal();
+                }
             }
         });
 
@@ -129,6 +141,39 @@ public class ControlFrame extends JFrame {
         btnStop.setForeground(Color.RED);
         toolBar.add(btnStop);
 
+        btnStop.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (immortals != null) {
+                    // Detener todos los inmortales
+                    for (Immortal im : immortals) {
+                        im.stopImmortal();
+                    }
+
+                    // Esperar a que todos terminen
+                    for (Immortal im : immortals) {
+                        try {
+                            im.join(); // Esperar a que el hilo termine
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+
+                    // Limpiar la lista
+                    immortals.clear();
+
+                    // Resetear la interfaz
+                    output.setText("");
+                    statisticsLabel.setText("Immortals total health:");
+
+                    // Reactivar el botón Start
+                    btnStart.setEnabled(true);
+
+                    // Mensaje de confirmación
+                    output.append("Simulation stopped. All immortals have been terminated.\n");
+                }
+            }
+        });
+
         scrollPane = new JScrollPane();
         contentPane.add(scrollPane, BorderLayout.CENTER);
 
@@ -143,13 +188,12 @@ public class ControlFrame extends JFrame {
     }
 
     public List<Immortal> setupInmortals() {
-
         ImmortalUpdateReportCallback ucb=new TextAreaUpdateReportCallback(output,scrollPane);
-        
+
         try {
             int ni = Integer.parseInt(numOfImmortals.getText());
 
-            List<Immortal> il = new LinkedList<Immortal>();
+            List<Immortal> il = new java.util.concurrent.CopyOnWriteArrayList<Immortal>();
 
             for (int i = 0; i < ni; i++) {
                 Immortal i1 = new Immortal("im" + i, il, DEFAULT_IMMORTAL_HEALTH, DEFAULT_DAMAGE_VALUE,ucb);
@@ -160,7 +204,6 @@ public class ControlFrame extends JFrame {
             JOptionPane.showConfirmDialog(null, "Número inválido.");
             return null;
         }
-
     }
 
 }
