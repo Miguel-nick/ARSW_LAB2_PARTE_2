@@ -1,6 +1,9 @@
 
 ## Escuela Colombiana de Ingeniería
 ### Arquitecturas de Software – ARSW
+### Solucion del laboratiro
+- Miguel Sandoval
+- Laura Castillo
 
 
 #### Ejercicio – programación concurrente, condiciones de carrera y sincronización de hilos. EJERCICIO INDIVIDUAL O EN PAREJAS.
@@ -10,7 +13,21 @@
 Control de hilos con wait/notify. Productor/consumidor.
 
 1. Revise el funcionamiento del programa y ejecútelo. Mientras esto ocurren, ejecute jVisualVM y revise el consumo de CPU del proceso correspondiente. A qué se debe este consumo?, cual es la clase responsable?
+
+- Al ejecutar el programa inicial se observa que el productor genera un elemento aproximadamente cada segundo, mientras que el consumidor intenta consumir elementos continuamente. Debido a esta diferencia de velocidades, en muchos momentos la cola se encuentra vacía.
+
+- El problema principal se encuentra en la implementación de la clase Consumer. El método run() contiene un ciclo infinito que verifica constantemente si existen elementos en la cola.
+  
+- Cuando la cola tiene elementos, el consumidor los retira correctamente. Sin embargo, cuando la cola está vacía, el hilo no espera ni se bloquea, sino que continúa ejecutando el ciclo y consultando repetidamente el tamaño de la cola. Este comportamiento se conoce como espera activa y provoca un consumo innecesario de CPU. El hilo consumidor permanece utilizando el procesador incluso cuando no tiene elementos para procesar.
+  
+- Por lo tanto, la clase responsable principalmente del consumo elevado de CPU es Consumer, debido a la forma en que implementa el ciclo de consumo y la comprobación de la cola.
+
 2. Haga los ajustes necesarios para que la solución use más eficientemente la CPU, teniendo en cuenta que -por ahora- la producción es lenta y el consumo es rápido. Verifique con JVisualVM que el consumo de CPU se reduzca.
+
+- Con este cambio, cuando la cola está vacía el consumidor deja de ejecutar continuamente el ciclo y queda bloqueado esperando un nuevo elemento. De esta manera se elimina la espera activa y se utiliza la CPU de forma mucho más eficiente.
+  
+- El problema no estaba en utilizar un ciclo while(true), sino en que dentro del ciclo el consumidor consultaba continuamente si la cola tenía elementos. Esto generaba una espera activa y un consumo innecesario de CPU. Al utilizar BlockingQueue.take(), el consumidor queda bloqueado cuando la cola está vacía y continúa únicamente cuando existe un elemento disponible.
+
 3. Haga que ahora el productor produzca muy rápido, y el consumidor consuma lento. Teniendo en cuenta que el productor conoce un límite de Stock (cuantos elementos debería tener, a lo sumo en la cola), haga que dicho límite se respete. Revise el API de la colección usada como cola para ver cómo garantizar que dicho límite no se supere. Verifique que, al poner un límite pequeño para el 'stock', no haya consumo alto de CPU ni errores.
 
 
