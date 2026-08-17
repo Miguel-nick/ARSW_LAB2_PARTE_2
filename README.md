@@ -21,16 +21,21 @@ Control de hilos con wait/notify. Productor/consumidor.
 - Cuando la cola tiene elementos, el consumidor los retira correctamente. Sin embargo, cuando la cola está vacía, el hilo no espera ni se bloquea, sino que continúa ejecutando el ciclo y consultando repetidamente el tamaño de la cola. Este comportamiento se conoce como espera activa y provoca un consumo innecesario de CPU. El hilo consumidor permanece utilizando el procesador incluso cuando no tiene elementos para procesar.
   
 - Por lo tanto, la clase responsable principalmente del consumo elevado de CPU es Consumer, debido a la forma en que implementa el ciclo de consumo y la comprobación de la cola.
-
+- CAPTURA JVISUALVM
 2. Haga los ajustes necesarios para que la solución use más eficientemente la CPU, teniendo en cuenta que -por ahora- la producción es lenta y el consumo es rápido. Verifique con JVisualVM que el consumo de CPU se reduzca.
 
 - Con este cambio, cuando la cola está vacía el consumidor deja de ejecutar continuamente el ciclo y queda bloqueado esperando un nuevo elemento. De esta manera se elimina la espera activa y se utiliza la CPU de forma mucho más eficiente.
   
 - El problema no estaba en utilizar un ciclo while(true), sino en que dentro del ciclo el consumidor consultaba continuamente si la cola tenía elementos. Esto generaba una espera activa y un consumo innecesario de CPU. Al utilizar BlockingQueue.take(), el consumidor queda bloqueado cuando la cola está vacía y continúa únicamente cuando existe un elemento disponible.
+- CAPTURA EN JVISUALVM
 
 3. Haga que ahora el productor produzca muy rápido, y el consumidor consuma lento. Teniendo en cuenta que el productor conoce un límite de Stock (cuantos elementos debería tener, a lo sumo en la cola), haga que dicho límite se respete. Revise el API de la colección usada como cola para ver cómo garantizar que dicho límite no se supere. Verifique que, al poner un límite pequeño para el 'stock', no haya consumo alto de CPU ni errores.
+- Se utilizó ArrayBlockingQueue para establecer un límite máximo de elementos en la cola. Esta estructura recibe su capacidad al momento de ser creada, por lo que en este caso se utilizó un stock de 2 elementos. Para insertar los productos se utilizó el método put(), el cual bloquea al productor cuando la cola alcanza su capacidad máxima, evitando que el número de elementos supere el límite establecido. De esta manera, el productor espera hasta que el consumidor retire un elemento y exista nuevamente espacio disponible. Al realizar la prueba con un stock pequeño se verificó que la cola no supera la capacidad definida y que no se presentan errores ni un consumo elevado de CPU por espera activa.
 
+<img width="532" height="359" alt="Captura de pantalla 2026-08-17 180749" src="https://github.com/user-attachments/assets/6ece8ef8-5984-478b-8bcc-942924b65a24" />
 
+- CAPTURA JVISUALVM
+  
 ##### Parte II. – Antes de terminar la clase.
 
 Teniendo en cuenta los conceptos vistos de condición de carrera y sincronización, haga una nueva versión -más eficiente- del ejercicio anterior (el buscador de listas negras). En la versión actual, cada hilo se encarga de revisar el host en la totalidad del subconjunto de servidores que le corresponde, de manera que en conjunto se están explorando la totalidad de servidores. Teniendo esto en cuenta, haga que:
