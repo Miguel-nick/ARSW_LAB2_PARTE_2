@@ -5,10 +5,8 @@
  */
 package edu.eci.arst.concprg.prodcons;
 
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -18,16 +16,10 @@ public class StartProduction {
 
     public static void main(String[] args) {
 
-        BlockingQueue<Integer> queue = new LinkedBlockingQueue<>();
+        // Stock máximo de 2 elementos para prueba
+        BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(2);
 
-        new Producer(queue, Long.MAX_VALUE).start();
-
-        // Let the producer create products for 5 seconds (stock).
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(StartProduction.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        new Producer(queue, 5).start();
 
         new Consumer(queue).start();
     }

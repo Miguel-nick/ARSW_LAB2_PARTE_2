@@ -25,6 +25,10 @@ public class Consumer extends Thread {
             try {
                 int elem = queue.take();
                 System.out.println("Consumer consumes " + elem);
+
+                // Simula un consumo lento
+                Thread.sleep(2000);
+
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 break;
