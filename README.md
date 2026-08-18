@@ -107,7 +107,7 @@ Sincronización y Dead-Locks.
 
 11. Para finalizar, implemente la opción STOP.
 
-<!--
+
 ### Parte III – respuesta final
 
 Para este ejercicio, el concepto clave es el invariante de la simulación: en un instante en el que no se está realizando una actualización de salud, la suma total de los puntos de vida de todos los inmortales debe permanecer constante. Si hay N jugadores y cada uno inicia con 100 puntos, entonces el total esperado es 100 x N. Este valor representa la consistencia global del sistema y permite verificar si la ejecución concurrente mantiene la lógica del juego.
@@ -119,7 +119,7 @@ También fue necesario proteger la región crítica de los combates entre inmort
 Con estas correcciones, la simulación conserva el invariante esperado, puede pausar y reanudar correctamente, y finalmente detenerse sin generar inconsistencias en la ejecución. La estrategia de sincronización aplicada permite controlar la concurrencia de forma segura, manteniendo la lógica del juego y evitando bloqueos o condiciones de carrera.
 
 Autora: Laura Castillo
-
+<!--
 ### Criterios de evaluación
 
 1. Parte I.
