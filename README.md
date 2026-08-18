@@ -64,6 +64,18 @@ Sincronización y Dead-Locks.
 
 11. Para finalizar, implemente la opción STOP.
 
+### Parte III – respuesta final
+
+Para este ejercicio, el concepto clave es el invariante de la simulación: en un instante en el que no se está realizando una actualización de salud, la suma total de los puntos de vida de todos los inmortales debe permanecer constante. Si hay N jugadores y cada uno inicia con 100 puntos, entonces el total esperado es 100 x N. Este valor representa la consistencia global del sistema y permite verificar si la ejecución concurrente mantiene la lógica del juego.
+
+La principal condición de carrera se presentaba al ejecutar la operación “pause and check”, porque se consultaba la lista compartida de salud mientras otros hilos seguían modificando esos valores. Para corregir esta inconsistencia, la simulación debe pausar a todos los inmortales antes de calcular la suma total y, luego, permitir la reanudación del proceso. De esta forma, la información visualizada corresponde a un estado estable del sistema.
+
+También fue necesario proteger la región crítica de los combates entre inmortales. Cada pelea debe sincronizar los dos actores involucrados en un orden fijo, evitando así que dos hilos intenten adquirir los mismos locks en distinta secuencia y produzcan deadlocks. Este mecanismo garantiza que la actualización de salud sea segura y consistente. Además, al eliminar a los inmortales muertos se utilizó una colección concurrente, lo que evita volver la simulación secuencial y elimina la posibilidad de errores por modificación simultánea de la lista.
+
+Con estas correcciones, la simulación conserva el invariante esperado, puede pausar y reanudar correctamente, y finalmente detenerse sin generar inconsistencias en la ejecución. La estrategia de sincronización aplicada permite controlar la concurrencia de forma segura, manteniendo la lógica del juego y evitando bloqueos o condiciones de carrera.
+
+Autora: Laura Castillo
+
 <!--
 ### Criterios de evaluación
 
