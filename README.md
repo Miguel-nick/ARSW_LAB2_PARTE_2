@@ -22,13 +22,25 @@ Control de hilos con wait/notify. Productor/consumidor.
   
 - Por lo tanto, la clase responsable principalmente del consumo elevado de CPU es Consumer, debido a la forma en que implementa el ciclo de consumo y la comprobación de la cola.
 
+![Captura 1 - consumo alto de CPU antes del ajuste](cpu_alta_antes.png)
+
+*Figura 1. Consumo elevado de CPU antes del ajuste, causado por espera activa en el consumidor.*
+
 2. Haga los ajustes necesarios para que la solución use más eficientemente la CPU, teniendo en cuenta que -por ahora- la producción es lenta y el consumo es rápido. Verifique con JVisualVM que el consumo de CPU se reduzca.
 
 - Con este cambio, cuando la cola está vacía el consumidor deja de ejecutar continuamente el ciclo y queda bloqueado esperando un nuevo elemento. De esta manera se elimina la espera activa y se utiliza la CPU de forma mucho más eficiente.
   
 - El problema no estaba en utilizar un ciclo while(true), sino en que dentro del ciclo el consumidor consultaba continuamente si la cola tenía elementos. Esto generaba una espera activa y un consumo innecesario de CPU. Al utilizar BlockingQueue.take(), el consumidor queda bloqueado cuando la cola está vacía y continúa únicamente cuando existe un elemento disponible.
 
+![Captura 2 - consumo reducido de CPU después del ajuste](cpu_baja_despues.png)
+
+*Figura 2. Reducción del consumo de CPU después del ajuste, al eliminar la espera activa.*
+
 3. Haga que ahora el productor produzca muy rápido, y el consumidor consuma lento. Teniendo en cuenta que el productor conoce un límite de Stock (cuantos elementos debería tener, a lo sumo en la cola), haga que dicho límite se respete. Revise el API de la colección usada como cola para ver cómo garantizar que dicho límite no se supere. Verifique que, al poner un límite pequeño para el 'stock', no haya consumo alto de CPU ni errores.
+
+![Captura 3 - validación con stock limitado](stock_limitado_validacion.png)
+
+*Figura 3. Validación final con productor rápido, consumidor lento y límite de stock pequeño, sin errores ni consumo excesivo de CPU.*
 
 
 ##### Parte II. – Antes de terminar la clase.
